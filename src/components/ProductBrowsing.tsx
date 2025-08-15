@@ -11,6 +11,7 @@ interface Product {
   quantity: number;
   unit: string;
   imageUrl?: string;
+  inStock: boolean;
   farmer: {
     id: string;
     name: string;
@@ -37,9 +38,10 @@ interface Product {
 
 interface ProductBrowsingProps {
   consumerId?: string;
+  onAddToCart?: (productId: string) => void;
 }
 
-export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
+export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrowsingProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,10 +51,22 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [addedToCart, setAddedToCart] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
-  }, [selectedCategory, minPrice, maxPrice, searchTerm]);
+    setMounted(true);
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      fetchProducts();
+    }
+  }, [selectedCategory, minPrice, maxPrice, searchTerm, mounted]);
 
   async function fetchProducts() {
     try {
@@ -106,6 +120,51 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
 
   function handleMouseLeave() {
     setHoveredProduct(null);
+  }
+
+  async function addToCart(productId: string) {
+    if (!consumerId || !mounted) {
+      alert('Please log in to add items to cart');
+      return;
+    }
+
+    setAddingToCart(productId);
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          userId: consumerId, 
+          productId, 
+          quantity: 1 
+        })
+      });
+
+      const data = await response.json();
+      if (data.success && mounted) {
+        if (onAddToCart) {
+          onAddToCart(productId);
+        }
+        // Show success feedback using state
+        setAddedToCart(productId);
+        setTimeout(() => {
+          if (mounted) {
+            setAddedToCart(null);
+          }
+        }, 2000);
+      } else if (mounted) {
+        alert(data.error || 'Failed to add to cart');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      if (mounted) {
+        alert('Failed to add to cart');
+      }
+    } finally {
+      if (mounted) {
+        setAddingToCart(null);
+      }
+    }
   }
 
   if (loading) {
@@ -322,8 +381,37 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
                 )}
 
                 {/* Add to Cart Button */}
-                <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-4 rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm">
-                  Add to Cart
+                <button 
+                  onClick={() => addToCart(product.id)}
+                  disabled={addingToCart === product.id || !product.inStock || product.quantity === 0}
+                  className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm disabled:cursor-not-allowed disabled:transform-none ${
+                    addedToCart === product.id
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : addingToCart === product.id || !product.inStock || product.quantity === 0
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white'
+                  }`}
+                >
+                  {addingToCart === product.id ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Adding...
+                    </div>
+                  ) : addedToCart === product.id ? (
+                    <div className="flex items-center justify-center">
+                      <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Added to Cart!
+                    </div>
+                  ) : !product.inStock || product.quantity === 0 ? (
+                    'Out of Stock'
+                  ) : (
+                    'Add to Cart'
+                  )}
                 </button>
               </div>
             </div>

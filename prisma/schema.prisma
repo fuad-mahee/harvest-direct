@@ -23,6 +23,10 @@ model User {
   status       UserStatus    @default(PENDING)
   products     Product[]
   farmerProfile FarmerProfile?
+  cart         Cart?
+  orders       Order[]       @relation("UserOrders")
+  farmerOrderItems OrderItem[] @relation("FarmerOrderItems")
+  notifications Notification[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -41,17 +45,75 @@ model Product {
   farmerId    String
   farmer      User          @relation(fields: [farmerId], references: [id])
   status      ProductStatus @default(PENDING)
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
 
+// Cart model for customer shopping cart
+model Cart {
+  id         String     @id @default(cuid())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  items      CartItem[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+// CartItem model for items in shopping cart
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId]) // Ensure one product per cart
+}
+
 // Order model for customer orders
 model Order {
-  id        String      @id @default(cuid())
-  total     Float
-  status    OrderStatus @default(PENDING)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation("UserOrders", fields: [userId], references: [id])
+  total      Float
+  status     OrderStatus @default(PENDING)
+  items      OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+// OrderItem model for items in an order
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float   // Price at time of order
+  farmerId  String  // For farmer notifications
+  farmer    User    @relation("FarmerOrderItems", fields: [farmerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Notification model for order notifications
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      NotificationType
+  title     String
+  message   String
+  orderId   String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Farmer Profile model for farm details and certification
@@ -76,6 +138,14 @@ model FarmerProfile {
   approvedBy      String?              // Admin user ID who approved
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
+}
+
+enum NotificationType {
+  ORDER_RECEIVED
+  ORDER_CONFIRMED
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  ORDER_CANCELLED
 }
 
 enum OrderStatus {

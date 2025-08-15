@@ -5,7 +5,6 @@ import ProductBrowsing from '@/components/ProductBrowsing';
 import CartComponent from '@/components/CartComponent';
 import OrdersComponent from '@/components/OrdersComponent';
 import NotificationsComponent from '@/components/NotificationsComponent';
-import ClientOnly from '@/components/ClientOnly';
 
 interface User {
   id: string;
@@ -19,30 +18,23 @@ export default function ConsumerDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('products');
   const [cartItemCount, setCartItemCount] = useState(0);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    
-    // Get user data from localStorage only after component mounts
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setLoading(false);
-      } else {
-        // If no user data in localStorage, redirect to login
-        window.location.href = '/login';
-      }
+    // Get user data from localStorage
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      setLoading(false);
+    } else {
+      // If no user data in localStorage, redirect to login
+      window.location.href = '/login';
     }
   }, []);
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('currentUser');
-      window.location.href = '/login';
-    }
+    localStorage.removeItem('currentUser');
+    window.location.href = '/login';
   };
 
   const handleCartUpdate = (itemCount: number) => {
@@ -55,7 +47,7 @@ export default function ConsumerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {!mounted || loading ? (
+      {loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
         </div>
@@ -68,19 +60,15 @@ export default function ConsumerDashboard() {
                 <h1 className="text-3xl font-bold text-gray-900">Consumer Dashboard</h1>
                 <div className="flex items-center space-x-4">
                   {/* Notifications */}
-                  <ClientOnly>
-                    {user && <NotificationsComponent userId={user.id} />}
-                  </ClientOnly>
+                  {user && <NotificationsComponent userId={user.id} />}
                   
                   {/* Cart */}
-                  <ClientOnly>
-                    {user && (
-                      <CartComponent 
-                        userId={user.id} 
-                        onCartUpdate={handleCartUpdate}
-                      />
-                    )}
-                  </ClientOnly>
+                  {user && (
+                    <CartComponent 
+                      userId={user.id} 
+                      onCartUpdate={handleCartUpdate}
+                    />
+                  )}
                   
                   <div className="text-sm text-gray-500">
                     Welcome, {user?.name || 'Consumer'}
@@ -204,26 +192,20 @@ export default function ConsumerDashboard() {
                   </div>
 
                   {/* Product Browsing */}
-                  <ClientOnly>
-                    {user && (
-                      <ProductBrowsing 
-                        consumerId={user.id} 
-                        onAddToCart={handleAddToCart}
-                      />
-                    )}
-                  </ClientOnly>
+                  {user && (
+                    <ProductBrowsing 
+                      consumerId={user.id} 
+                      onAddToCart={handleAddToCart}
+                    />
+                  )}
                 </>
               )}
 
-              {activeTab === 'orders' && (
-                <ClientOnly>
-                  {user && (
-                    <OrdersComponent 
-                      userId={user.id} 
-                      userRole="CONSUMER"
-                    />
-                  )}
-                </ClientOnly>
+              {activeTab === 'orders' && user && (
+                <OrdersComponent 
+                  userId={user.id} 
+                  userRole="CONSUMER"
+                />
               )}
             </div>
           </div>

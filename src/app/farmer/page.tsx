@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import ProductListing from '@/components/ProductListing';
 import FarmerProfile from '@/components/FarmerProfile';
+import OrdersComponent from '@/components/OrdersComponent';
+import NotificationsComponent from '@/components/NotificationsComponent';
+import ClientOnly from '@/components/ClientOnly';
 
 interface User {
   id: string;
@@ -15,30 +18,37 @@ export default function FarmerDashboard() {
   const [farmerId, setFarmerId] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'products' | 'profile'>('products');
+  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders'>('products');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      setFarmerId(parsedUser.id);
-      setLoading(false);
-    } else {
-      // If no user data in localStorage, redirect to login
-      window.location.href = '/login';
+    setMounted(true);
+    
+    // Get user data from localStorage only after component mounts
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('currentUser');
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setFarmerId(parsedUser.id);
+        setLoading(false);
+      } else {
+        // If no user data in localStorage, redirect to login
+        window.location.href = '/login';
+      }
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('currentUser');
+      window.location.href = '/login';
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {loading ? (
+      {!mounted || loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
         </div>
@@ -49,6 +59,11 @@ export default function FarmerDashboard() {
               <div className="flex justify-between items-center py-6">
                 <h1 className="text-3xl font-bold text-gray-900">Farmer Dashboard</h1>
                 <div className="flex items-center space-x-4">
+                  {/* Notifications */}
+                  <ClientOnly>
+                    {user && <NotificationsComponent userId={user.id} />}
+                  </ClientOnly>
+                  
                   <div className="text-sm text-gray-500">
                     Welcome, {user?.name || 'Farmer'}
                   </div>
@@ -81,6 +96,18 @@ export default function FarmerDashboard() {
                       }`}
                     >
                       Product Listings
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('orders')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'orders'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Orders Received
                     </button>
                   </li>
                   <li>
@@ -174,6 +201,16 @@ export default function FarmerDashboard() {
               {activeSection === 'products' && (
                 <section id="product-listings">
                   <ProductListing farmerId={farmerId} />
+                </section>
+              )}
+
+              {/* Orders Section */}
+              {activeSection === 'orders' && (
+                <section id="orders">
+                  <OrdersComponent 
+                    farmerId={farmerId} 
+                    userRole="FARMER"
+                  />
                 </section>
               )}
 
