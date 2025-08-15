@@ -104,16 +104,18 @@ model OrderItem {
 
 // Notification model for order notifications
 model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  type      NotificationType
-  title     String
-  message   String
-  orderId   String?
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String           @id @default(cuid())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  type                NotificationType
+  title               String
+  message             String
+  orderId             String?
+  relatedEntityId     String?          // Can be productId, orderId, etc.
+  relatedEntityType   String?          // 'PRODUCT', 'ORDER', etc.
+  read                Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 }
 
 // Farmer Profile model for farm details and certification
@@ -146,6 +148,7 @@ enum NotificationType {
   ORDER_SHIPPED
   ORDER_DELIVERED
   ORDER_CANCELLED
+  NEW_PRODUCT
 }
 
 enum OrderStatus {

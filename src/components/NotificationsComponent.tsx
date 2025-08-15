@@ -121,6 +121,14 @@ export default function NotificationsComponent({ userId }: NotificationsComponen
             </svg>
           </div>
         );
+      case 'NEW_PRODUCT':
+        return (
+          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+        );
       default:
         return (
           <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">

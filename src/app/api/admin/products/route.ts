@@ -72,6 +72,41 @@ export async function PUT(request: NextRequest) {
       }
     });
 
+    // If product is approved, notify all consumers
+    if (status === 'APPROVED') {
+      try {
+        // Get all consumers
+        const consumers = await prisma.user.findMany({
+          where: {
+            role: 'CONSUMER'
+          },
+          select: {
+            id: true
+          }
+        });
+
+        // Create notifications for all consumers
+        const notifications = consumers.map(consumer => ({
+          userId: consumer.id,
+          type: 'NEW_PRODUCT',
+          title: 'New Product Available!',
+          message: `New product "${updatedProduct.name}" by ${updatedProduct.farmer.name} is now available for purchase.`,
+          relatedEntityId: updatedProduct.id,
+          relatedEntityType: 'PRODUCT',
+          read: false
+        }));
+
+        if (notifications.length > 0) {
+          await (prisma as any).notification.createMany({
+            data: notifications
+          });
+        }
+      } catch (notificationError) {
+        console.error('Error creating consumer notifications:', notificationError);
+        // Don't fail the main operation if notifications fail
+      }
+    }
+
     return NextResponse.json({
       success: true,
       product: updatedProduct,
