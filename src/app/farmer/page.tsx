@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ProductListing from '@/components/ProductListing';
+import FarmerProfile from '@/components/FarmerProfile';
 
 interface User {
   id: string;
@@ -14,6 +15,7 @@ export default function FarmerDashboard() {
   const [farmerId, setFarmerId] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<'products' | 'profile'>('products');
 
   useEffect(() => {
     // Get user data from localStorage
@@ -63,77 +65,126 @@ export default function FarmerDashboard() {
       
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            {/* Quick Stats */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">P</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Products Listed
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        0
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="flex gap-6">
+            {/* Left Submenu */}
+            <aside className="hidden md:block w-64 flex-shrink-0">
+              <nav className="bg-white shadow rounded-lg p-4 sticky top-24">
+                <h2 className="text-sm font-semibold text-gray-700 mb-3">Menu</h2>
+                <ul className="space-y-1">
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('products')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'products'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Product Listings
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('profile')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'profile'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Profile & Certification
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </aside>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">O</span>
+            {/* Main Content */}
+            <main className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                {/* Quick Stats */}
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="p-5">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">P</span>
+                        </div>
+                      </div>
+                      <div className="ml-5 w-0 flex-1">
+                        <dl>
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            Products Listed
+                          </dt>
+                          <dd className="text-lg font-medium text-gray-900">
+                            0
+                          </dd>
+                        </dl>
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Orders Received
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        0
-                      </dd>
-                    </dl>
-                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">$</span>
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="p-5">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">O</span>
+                        </div>
+                      </div>
+                      <div className="ml-5 w-0 flex-1">
+                        <dl>
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            Orders Received
+                          </dt>
+                          <dd className="text-lg font-medium text-gray-900">
+                            0
+                          </dd>
+                        </dl>
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">
-                        Total Earnings
-                      </dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        $0.00
-                      </dd>
-                    </dl>
+                </div>
+
+                <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="p-5">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">$</span>
+                        </div>
+                      </div>
+                      <div className="ml-5 w-0 flex-1">
+                        <dl>
+                          <dt className="text-sm font-medium text-gray-500 truncate">
+                            Total Earnings
+                          </dt>
+                          <dd className="text-lg font-medium text-gray-900">
+                            $0.00
+                          </dd>
+                        </dl>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+
+              {/* Product Listing Section */}
+              {activeSection === 'products' && (
+                <section id="product-listings">
+                  <ProductListing farmerId={farmerId} />
+                </section>
+              )}
+
+              {/* Profile & Certification Section */}
+              {activeSection === 'profile' && (
+                <section id="farmer-profile">
+                  <FarmerProfile farmerId={farmerId} />
+                </section>
+              )}
+            </main>
           </div>
-
-          {/* Product Listing Section */}
-          <ProductListing farmerId={farmerId} />
         </div>
       </div>
         </>

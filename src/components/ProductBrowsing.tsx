@@ -15,6 +15,22 @@ interface Product {
     id: string;
     name: string;
     email: string;
+    farmerProfile?: {
+      id: string;
+      farmName: string;
+      farmAddress: string;
+      farmSize: string;
+      farmingPractices: string[];
+      certifications: string[];
+      aboutFarm: string | null;
+      contactPhone: string | null;
+      website: string | null;
+      specialization: string[];
+      experience: number | null;
+      status: string;
+      certificationBadge: string | null;
+      approvedAt: string | null;
+    } | null;
   };
   createdAt: string;
 }
@@ -31,6 +47,8 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     fetchProducts();
@@ -75,6 +93,19 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
     setMinPrice('');
     setMaxPrice('');
     setSearchTerm('');
+  }
+
+  function handleMouseEnter(productId: string, event: React.MouseEvent) {
+    setHoveredProduct(productId);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  }
+
+  function handleMouseMove(event: React.MouseEvent) {
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  }
+
+  function handleMouseLeave() {
+    setHoveredProduct(null);
   }
 
   if (loading) {
@@ -184,14 +215,14 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300 relative">
               {/* Product Image */}
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
                   <div className="text-gray-400 text-center">
@@ -201,44 +232,256 @@ export default function ProductBrowsing({ consumerId }: ProductBrowsingProps) {
                     <span className="text-sm">No image</span>
                   </div>
                 )}
-              </div>
-
-              {/* Product Info */}
-              <div className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900 truncate">{product.name}</h3>
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                
+                {/* Category Badge - Positioned on image */}
+                <div className="absolute top-3 right-3">
+                  <span className="text-xs bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full font-medium shadow-sm">
                     {product.category}
                   </span>
                 </div>
+              </div>
 
+              {/* Product Info */}
+              <div className="p-5 space-y-4">
+                {/* Product Name */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
+                    {product.name}
+                  </h3>
+                </div>
+
+                {/* Description */}
                 {product.description && (
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
                     {product.description}
                   </p>
                 )}
 
-                <div className="flex justify-between items-center mb-3">
-                  <div className="text-xl font-bold text-green-600">
-                    ${product.price.toFixed(2)}
-                    <span className="text-sm text-gray-500 font-normal">/{product.unit}</span>
+                {/* Price and Availability */}
+                <div className="flex justify-between items-end">
+                  <div>
+                    <div className="text-2xl font-bold text-green-600">
+                      ${product.price.toFixed(2)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      per {product.unit}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {product.quantity} {product.unit} available
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-900">
+                      {product.quantity} {product.unit}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      available
+                    </div>
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-600 mb-3">
-                  <span className="font-medium">Farmer:</span> {product.farmer.name}
+                {/* Farmer Information - Always Visible */}
+                <div className="flex items-center space-x-3 py-2">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-medium text-green-700">
+                      {product.farmer.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-medium text-gray-900">
+                        {product.farmer.name}
+                      </span>
+                      {product.farmer.farmerProfile?.status === 'APPROVED' && product.farmer.farmerProfile.certificationBadge && (
+                        <span className="inline-flex items-center text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200 flex-shrink-0">
+                          <span className="mr-1">🏆</span>
+                          <span className="font-medium">Verified</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Farmer
+                    </div>
+                  </div>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                {/* Hover Area for Profile Details */}
+                {product.farmer.farmerProfile?.status === 'APPROVED' && (
+                  <div 
+                    className="border border-dashed border-gray-200 rounded-lg p-3 cursor-pointer group hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200"
+                    onMouseEnter={(e) => handleMouseEnter(product.id, e)}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="flex items-center justify-center text-center">
+                      <div className="text-xs text-gray-600 group-hover:text-blue-700 font-medium flex items-center">
+                        <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Farm profile & certifications</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Add to Cart Button */}
+                <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-4 rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm">
                   Add to Cart
                 </button>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {/* Farmer Profile Tooltip */}
+      {hoveredProduct && (
+        (() => {
+          const product = products.find(p => p.id === hoveredProduct);
+          const profile = product?.farmer.farmerProfile;
+          
+          if (!profile || profile.status !== 'APPROVED') return null;
+          
+          return (
+            <div 
+              className="fixed z-50 bg-white border border-gray-200 rounded-xl shadow-xl p-5 max-w-sm pointer-events-none backdrop-blur-sm"
+              style={{
+                left: mousePosition.x + 15,
+                top: mousePosition.y - 10,
+                transform: 'translateY(-100%)',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+              }}
+            >
+              <div className="space-y-4">
+                {/* Farm Header */}
+                <div className="border-b border-gray-100 pb-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 text-base leading-tight">{profile.farmName}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{profile.farmAddress}</p>
+                    </div>
+                    {profile.certificationBadge && (
+                      <span className="ml-3 text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium border border-green-200 flex items-center flex-shrink-0">
+                        <span className="mr-1">🏆</span>
+                        {profile.certificationBadge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-4 text-xs text-gray-500">
+                    {profile.experience && (
+                      <span className="flex items-center">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                        </svg>
+                        {profile.experience} years exp.
+                      </span>
+                    )}
+                    <span className="flex items-center">
+                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                      {profile.farmSize}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Specialization */}
+                {profile.specialization.length > 0 && (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Specialization</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {profile.specialization.slice(0, 3).map((spec, index) => (
+                        <span key={index} className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-md font-medium border border-green-100">
+                          {spec}
+                        </span>
+                      ))}
+                      {profile.specialization.length > 3 && (
+                        <span className="text-xs text-gray-500 px-2 py-1">+{profile.specialization.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Farming Practices */}
+                {profile.farmingPractices.length > 0 && (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Farming Practices</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {profile.farmingPractices.slice(0, 3).map((practice, index) => (
+                        <span key={index} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium border border-blue-100">
+                          {practice}
+                        </span>
+                      ))}
+                      {profile.farmingPractices.length > 3 && (
+                        <span className="text-xs text-gray-500 px-2 py-1">+{profile.farmingPractices.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Certifications */}
+                {profile.certifications.length > 0 && (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Certifications</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {profile.certifications.slice(0, 2).map((cert, index) => (
+                        <span key={index} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium border border-purple-100">
+                          {cert}
+                        </span>
+                      ))}
+                      {profile.certifications.length > 2 && (
+                        <span className="text-xs text-gray-500 px-2 py-1">+{profile.certifications.length - 2} more</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* About Farm */}
+                {profile.aboutFarm && (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 bg-gray-500 rounded-full mr-2"></div>
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider">About</p>
+                    </div>
+                    <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed">{profile.aboutFarm}</p>
+                  </div>
+                )}
+
+                {/* Contact Info */}
+                {(profile.contactPhone || profile.website) && (
+                  <div className="border-t border-gray-100 pt-3">
+                    <div className="text-xs text-gray-600 space-y-2">
+                      {profile.contactPhone && (
+                        <div className="flex items-center">
+                          <svg className="w-3 h-3 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                          </svg>
+                          <span className="font-medium">{profile.contactPhone}</span>
+                        </div>
+                      )}
+                      {profile.website && (
+                        <div className="flex items-center">
+                          <svg className="w-3 h-3 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.559-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.559.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z" clipRule="evenodd" />
+                          </svg>
+                          <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium">
+                            {profile.website.replace(/^https?:\/\//, '')}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()
       )}
     </div>
   );

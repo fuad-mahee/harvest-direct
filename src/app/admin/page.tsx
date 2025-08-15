@@ -36,9 +36,31 @@ interface PendingProduct {
   };
 }
 
+interface PendingProfile {
+  id: string;
+  farmName: string;
+  farmAddress: string;
+  farmSize: string;
+  farmingPractices: string[];
+  certifications: string[];
+  aboutFarm: string | null;
+  contactPhone: string | null;
+  website: string | null;
+  specialization: string[];
+  experience: number | null;
+  status: string;
+  createdAt: string;
+  farmer: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
 export default function AdminDashboard() {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [pendingProducts, setPendingProducts] = useState<PendingProduct[]>([]);
+  const [pendingProfiles, setPendingProfiles] = useState<PendingProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [user, setUser] = useState<User | null>(null);
@@ -56,6 +78,7 @@ export default function AdminDashboard() {
     
     fetchPendingUsers();
     fetchPendingProducts();
+    fetchPendingProfiles();
   }, []);
 
   const handleLogout = () => {
@@ -86,6 +109,18 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error fetching pending products:', error);
+    }
+  }
+
+  async function fetchPendingProfiles() {
+    try {
+      const response = await fetch('/api/admin/profiles');
+      const data = await response.json();
+      if (data.success) {
+        setPendingProfiles(data.profiles);
+      }
+    } catch (error) {
+      console.error('Error fetching pending profiles:', error);
     }
   }
 
@@ -135,6 +170,37 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error updating user status:', error);
       setMessage('An error occurred');
+    }
+  }
+
+  async function updateProfileStatus(profileId: string, status: 'APPROVED' | 'REJECTED', certificationBadge?: string, adminNotes?: string) {
+    try {
+      const response = await fetch('/api/admin/profiles', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          profileId, 
+          status, 
+          certificationBadge,
+          adminNotes,
+          approvedBy: user?.id
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setMessage(`Profile ${status.toLowerCase()} successfully`);
+        // Remove the profile from pending list
+        setPendingProfiles(prev => prev.filter(profile => profile.id !== profileId));
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage(data.error || 'Failed to update profile status');
+        setTimeout(() => setMessage(''), 3000);
+      }
+    } catch (error) {
+      console.error('Error updating profile status:', error);
+      setMessage('An error occurred. Please try again.');
+      setTimeout(() => setMessage(''), 3000);
     }
   }
 
@@ -306,6 +372,120 @@ export default function AdminDashboard() {
                             </button>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Profile Certification Approval Section */}
+          <div className="bg-white shadow rounded-lg mb-6">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Profile & Certification Approval</h2>
+              <p className="text-sm text-gray-600">Review and approve farmer profile submissions</p>
+            </div>
+            
+            <div className="p-6">
+              {pendingProfiles.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No pending profile submissions
+                </div>
+              ) : (
+                <div className="grid gap-6">
+                  {pendingProfiles.map((profile) => (
+                    <div key={profile.id} className="border border-gray-200 rounded-lg p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900">{profile.farmName}</h3>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Farmer:</span> {profile.farmer.name} ({profile.farmer.email})
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Submitted:</span> {new Date(profile.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                          PENDING
+                        </span>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Farm Details</h4>
+                          <ul className="text-sm text-gray-600 space-y-1">
+                            <li><span className="font-medium">Address:</span> {profile.farmAddress}</li>
+                            <li><span className="font-medium">Size:</span> {profile.farmSize}</li>
+                            {profile.experience && (
+                              <li><span className="font-medium">Experience:</span> {profile.experience} years</li>
+                            )}
+                            {profile.contactPhone && (
+                              <li><span className="font-medium">Phone:</span> {profile.contactPhone}</li>
+                            )}
+                            {profile.website && (
+                              <li><span className="font-medium">Website:</span> {profile.website}</li>
+                            )}
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Specialization & Practices</h4>
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-gray-500 mb-1">SPECIALIZATION</p>
+                            <div className="flex flex-wrap gap-1">
+                              {profile.specialization.map((spec, index) => (
+                                <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                  {spec}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="mb-3">
+                            <p className="text-xs font-medium text-gray-500 mb-1">FARMING PRACTICES</p>
+                            <div className="flex flex-wrap gap-1">
+                              {profile.farmingPractices.map((practice, index) => (
+                                <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                  {practice}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          {profile.certifications.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-500 mb-1">EXISTING CERTIFICATIONS</p>
+                              <div className="flex flex-wrap gap-1">
+                                {profile.certifications.map((cert, index) => (
+                                  <span key={index} className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+                                    {cert}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {profile.aboutFarm && (
+                        <div className="mb-4">
+                          <h4 className="font-medium text-gray-900 mb-2">About the Farm</h4>
+                          <p className="text-sm text-gray-700">{profile.aboutFarm}</p>
+                        </div>
+                      )}
+                      
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => updateProfileStatus(profile.id, 'APPROVED', 'Verified Farmer')}
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium"
+                        >
+                          Approve & Certify
+                        </button>
+                        <button
+                          onClick={() => updateProfileStatus(profile.id, 'REJECTED', undefined, 'Profile does not meet certification requirements')}
+                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium"
+                        >
+                          Reject
+                        </button>
                       </div>
                     </div>
                   ))}

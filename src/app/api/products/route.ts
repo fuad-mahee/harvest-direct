@@ -47,7 +47,25 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             name: true,
-            email: true
+            email: true,
+            farmerProfile: {
+              select: {
+                id: true,
+                farmName: true,
+                farmAddress: true,
+                farmSize: true,
+                farmingPractices: true,
+                certifications: true,
+                aboutFarm: true,
+                contactPhone: true,
+                website: true,
+                specialization: true,
+                experience: true,
+                status: true,
+                certificationBadge: true,
+                approvedAt: true
+              }
+            }
           }
         }
       },

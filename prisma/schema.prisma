@@ -15,15 +15,16 @@ datasource db {
 
 // User model for authentication
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  password  String
-  name      String?
-  role      UserRole   @default(CONSUMER)
-  status    UserStatus @default(PENDING)
-  products  Product[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String?
+  role         UserRole      @default(CONSUMER)
+  status       UserStatus    @default(PENDING)
+  products     Product[]
+  farmerProfile FarmerProfile?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 // Product model for farmer crop listings
@@ -53,6 +54,30 @@ model Order {
   updatedAt DateTime    @updatedAt
 }
 
+// Farmer Profile model for farm details and certification
+model FarmerProfile {
+  id              String               @id @default(cuid())
+  farmerId        String               @unique
+  farmer          User                 @relation(fields: [farmerId], references: [id])
+  farmName        String
+  farmAddress     String
+  farmSize        String               // e.g., "10 acres", "5 hectares"
+  farmingPractices String[]            // Array of practices like "Organic", "Sustainable", etc.
+  certifications  String[]             // Existing certifications
+  aboutFarm       String?              // Farm description
+  contactPhone    String?
+  website         String?
+  specialization  String[]             // e.g., ["Vegetables", "Fruits"]
+  experience      Int?                 // Years of farming experience
+  status          FarmerProfileStatus  @default(PENDING)
+  adminNotes      String?              // Admin notes for approval/rejection
+  certificationBadge String?           // Certification badge name/type
+  approvedAt      DateTime?
+  approvedBy      String?              // Admin user ID who approved
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -74,6 +99,12 @@ enum UserStatus {
 }
 
 enum ProductStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum FarmerProfileStatus {
   PENDING
   APPROVED
   REJECTED
