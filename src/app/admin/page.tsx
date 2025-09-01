@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import EducationalResourcesAdmin from '@/components/EducationalResourcesAdmin';
 
 interface User {
   id: string;
@@ -64,6 +65,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [user, setUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState('users');
 
   useEffect(() => {
     // Get user data from localStorage
@@ -225,15 +227,64 @@ export default function AdminDashboard() {
         </div>
       </div>
       
+      {/* Navigation Tabs */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'users'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              User Approval ({pendingUsers.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('products')}
+              className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'products'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Product Approval ({pendingProducts.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('profiles')}
+              className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'profiles'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Profile Approval ({pendingProfiles.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('resources')}
+              className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'resources'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Educational Resources
+            </button>
+          </nav>
+        </div>
+      </div>
+      
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           
-          {/* Account Approval Section */}
-          <div className="bg-white shadow rounded-lg mb-6">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Account Approval</h2>
-              <p className="text-sm text-gray-600">Manage pending user registrations</p>
-            </div>
+          {/* Tab Content */}
+          {activeTab === 'users' && (
+            <div className="bg-white shadow rounded-lg">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Account Approval</h2>
+                <p className="text-sm text-gray-600">Manage pending user registrations</p>
+              </div>
             
             <div className="p-6">
               {message && (
@@ -310,10 +361,11 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-          </div>
+            </div>
+          )}
 
-          {/* Product Listing Approval Section */}
-          <div className="bg-white shadow rounded-lg mb-6">
+          {activeTab === 'products' && (
+          <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">Product Listing Approval</h2>
               <p className="text-sm text-gray-600">Review and approve farmer product listings</p>
@@ -379,9 +431,10 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+          )}
 
-          {/* Profile Certification Approval Section */}
-          <div className="bg-white shadow rounded-lg mb-6">
+          {activeTab === 'profiles' && (
+          <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">Profile & Certification Approval</h2>
               <p className="text-sm text-gray-600">Review and approve farmer profile submissions</p>
@@ -493,14 +546,12 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+          )}
 
-          {/* Placeholder for other admin features */}
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-64 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-xl font-semibold text-gray-600 mb-2">Additional Admin Features</h2>
-              <p className="text-gray-500">Other admin functionality will be added here</p>
-            </div>
-          </div>
+          {activeTab === 'resources' && (
+            <EducationalResourcesAdmin />
+          )}
+
         </div>
       </div>
     </div>

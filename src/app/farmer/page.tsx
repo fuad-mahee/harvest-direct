@@ -5,6 +5,7 @@ import ProductListing from '@/components/ProductListing';
 import FarmerProfile from '@/components/FarmerProfile';
 import OrdersComponent from '@/components/OrdersComponent';
 import NotificationsComponent from '@/components/NotificationsComponent';
+import EducationalResourcesFarmer from '@/components/EducationalResourcesFarmer';
 import ClientOnly from '@/components/ClientOnly';
 
 interface User {
@@ -18,7 +19,7 @@ export default function FarmerDashboard() {
   const [farmerId, setFarmerId] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders'>('products');
+  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'resources'>('products');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -122,6 +123,18 @@ export default function FarmerDashboard() {
                       Profile & Certification
                     </button>
                   </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('resources')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'resources'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Educational Resources
+                    </button>
+                  </li>
                 </ul>
               </nav>
             </aside>
@@ -218,6 +231,13 @@ export default function FarmerDashboard() {
               {activeSection === 'profile' && (
                 <section id="farmer-profile">
                   <FarmerProfile farmerId={farmerId} />
+                </section>
+              )}
+
+              {/* Educational Resources Section */}
+              {activeSection === 'resources' && (
+                <section id="educational-resources">
+                  <EducationalResourcesFarmer />
                 </section>
               )}
             </main>
