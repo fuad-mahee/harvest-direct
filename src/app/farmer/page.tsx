@@ -6,6 +6,8 @@ import FarmerProfile from '@/components/FarmerProfile';
 import OrdersComponent from '@/components/OrdersComponent';
 import NotificationsComponent from '@/components/NotificationsComponent';
 import EducationalResourcesFarmer from '@/components/EducationalResourcesFarmer';
+import FinancialTrackingComponent from '@/components/FinancialTrackingComponent';
+import DashboardStats from '@/components/DashboardStats';
 import ClientOnly from '@/components/ClientOnly';
 
 interface User {
@@ -19,7 +21,7 @@ export default function FarmerDashboard() {
   const [farmerId, setFarmerId] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'resources'>('products');
+  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'financial' | 'resources'>('products');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -113,6 +115,18 @@ export default function FarmerDashboard() {
                   </li>
                   <li>
                     <button
+                      onClick={() => setActiveSection('financial')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'financial'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Financial Tracking
+                    </button>
+                  </li>
+                  <li>
+                    <button
                       onClick={() => setActiveSection('profile')}
                       className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
                         activeSection === 'profile'
@@ -141,74 +155,8 @@ export default function FarmerDashboard() {
 
             {/* Main Content */}
             <main className="flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                {/* Quick Stats */}
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">P</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Products Listed
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            0
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">O</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Orders Received
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            0
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="p-5">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">$</span>
-                        </div>
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-gray-500 truncate">
-                            Total Earnings
-                          </dt>
-                          <dd className="text-lg font-medium text-gray-900">
-                            $0.00
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Quick Stats */}
+              <DashboardStats farmerId={farmerId} />
 
               {/* Product Listing Section */}
               {activeSection === 'products' && (
@@ -224,6 +172,13 @@ export default function FarmerDashboard() {
                     farmerId={farmerId} 
                     userRole="FARMER"
                   />
+                </section>
+              )}
+
+              {/* Financial Tracking Section */}
+              {activeSection === 'financial' && (
+                <section id="financial-tracking">
+                  <FinancialTrackingComponent farmerId={farmerId} />
                 </section>
               )}
 
