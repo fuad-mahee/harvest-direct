@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import ProductReviews from './ProductReviews';
 
 interface Product {
   id: string;
@@ -33,6 +34,9 @@ interface Product {
       approvedAt: string | null;
     } | null;
   };
+  // Rating information
+  averageRating?: number;
+  totalReviews?: number;
   createdAt: string;
 }
 
@@ -54,6 +58,8 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showProductDetails, setShowProductDetails] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -166,6 +172,26 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
       }
     }
   }
+
+  const renderStars = (rating: number, totalReviews: number = 0) => {
+    return (
+      <div className="flex items-center space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <svg
+            key={star}
+            className={`w-4 h-4 ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+        <span className="text-sm text-gray-600 ml-1">
+          {rating > 0 ? `${rating.toFixed(1)} (${totalReviews})` : 'No reviews'}
+        </span>
+      </div>
+    );
+  };
 
   if (loading) {
     return (
@@ -360,6 +386,25 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
                     </div>
                   </div>
                 </div>
+
+                {/* Product Rating */}
+                <div className="py-2">
+                  {renderStars(product.averageRating || 0, product.totalReviews || 0)}
+                </div>
+
+                {/* Reviews and Details Button */}
+                <button
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setShowProductDetails(true);
+                  }}
+                  className="w-full py-2 px-3 text-sm border border-gray-200 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center space-x-2 mb-3"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span>View Reviews & Details</span>
+                </button>
 
                 {/* Hover Area for Profile Details */}
                 {product.farmer.farmerProfile?.status === 'APPROVED' && (
@@ -570,6 +615,123 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
             </div>
           );
         })()
+      )}
+
+      {/* Product Details Modal */}
+      {showProductDetails && selectedProduct && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">{selectedProduct.name}</h2>
+                  <p className="text-sm text-gray-600">by {selectedProduct.farmer.name}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowProductDetails(false);
+                  setSelectedProduct(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-6">
+                {/* Product Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  {/* Product Image */}
+                  <div className="bg-gray-100 rounded-lg overflow-hidden h-64">
+                    {selectedProduct.imageUrl ? (
+                      <img
+                        src={selectedProduct.imageUrl}
+                        alt={selectedProduct.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Product Details</h3>
+                      {selectedProduct.description && (
+                        <p className="text-gray-700 leading-relaxed mb-4">
+                          {selectedProduct.description}
+                        </p>
+                      )}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Price:</span>
+                          <span className="text-xl font-bold text-green-600">
+                            ${selectedProduct.price.toFixed(2)} per {selectedProduct.unit}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Available:</span>
+                          <span className="text-gray-900">
+                            {selectedProduct.quantity} {selectedProduct.unit}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600">Category:</span>
+                          <span className="text-gray-900">{selectedProduct.category}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Rating Summary */}
+                    <div className="border-t pt-4">
+                      <h4 className="text-md font-medium text-gray-900 mb-2">Customer Rating</h4>
+                      {renderStars(selectedProduct.averageRating || 0, selectedProduct.totalReviews || 0)}
+                    </div>
+
+                    {/* Add to Cart */}
+                    <div className="border-t pt-4">
+                      <button 
+                        onClick={() => {
+                          addToCart(selectedProduct.id);
+                          setShowProductDetails(false);
+                          setSelectedProduct(null);
+                        }}
+                        disabled={addingToCart === selectedProduct.id || !selectedProduct.inStock || selectedProduct.quantity === 0}
+                        className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                          addingToCart === selectedProduct.id || !selectedProduct.inStock || selectedProduct.quantity === 0
+                            ? 'bg-gray-400 text-white cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
+                      >
+                        {addingToCart === selectedProduct.id ? 'Adding...' : 
+                         !selectedProduct.inStock || selectedProduct.quantity === 0 ? 'Out of Stock' : 
+                         'Add to Cart'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reviews Section */}
+                <ProductReviews 
+                  productId={selectedProduct.id}
+                  currentUserId={consumerId}
+                  isConsumer={true}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

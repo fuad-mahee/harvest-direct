@@ -67,11 +67,34 @@ export async function GET(request: NextRequest) {
               }
             }
           }
+        },
+        reviews: {
+          where: {
+            reported: false
+          },
+          select: {
+            rating: true
+          }
         }
       },
       orderBy: {
         createdAt: 'desc'
       }
+    });
+
+    // Calculate rating statistics for each product
+    const productsWithRatings = products.map(product => {
+      const ratings = product.reviews.map(r => r.rating);
+      const averageRating = ratings.length > 0 
+        ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
+        : 0;
+      
+      return {
+        ...product,
+        averageRating,
+        totalReviews: ratings.length,
+        reviews: undefined // Remove reviews array from response
+      };
     });
 
     // Get unique categories for filter options
@@ -90,7 +113,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      products,
+      products: productsWithRatings,
       categories: uniqueCategories
     });
   } catch (error) {

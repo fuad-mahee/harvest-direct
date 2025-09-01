@@ -27,6 +27,10 @@ model User {
   orders       Order[]       @relation("UserOrders")
   farmerOrderItems OrderItem[] @relation("FarmerOrderItems")
   notifications Notification[]
+  // Review and Rating relations
+  reviews      ProductReview[] @relation("UserReviews")
+  givenFarmerRatings FarmerRating[] @relation("UserFarmerRatings")
+  receivedFarmerRatings FarmerRating[] @relation("FarmerRatings")
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -47,6 +51,7 @@ model Product {
   status      ProductStatus @default(PENDING)
   cartItems   CartItem[]
   orderItems  OrderItem[]
+  reviews     ProductReview[] // Product reviews relation
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -83,6 +88,7 @@ model Order {
   total      Float
   status     OrderStatus @default(PENDING)
   items      OrderItem[]
+  farmerRatings FarmerRating[] // Farmer ratings for this order
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
@@ -198,4 +204,42 @@ model EducationalResource {
   viewCount   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Product Review model for consumer reviews and ratings
+model ProductReview {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId      String   // Consumer who wrote the review
+  user        User     @relation("UserReviews", fields: [userId], references: [id], onDelete: Cascade)
+  rating      Float    // 1-5 star rating
+  title       String?  // Optional review title
+  comment     String?  // Optional review comment
+  verified    Boolean  @default(false) // Verified purchase
+  helpful     Int      @default(0) // Helpful votes count
+  reported    Boolean  @default(false) // Reported for moderation
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([productId, userId]) // One review per user per product
+}
+
+// Farmer Rating model for overall farmer ratings
+model FarmerRating {
+  id          String   @id @default(cuid())
+  farmerId    String   // Farmer being rated
+  farmer      User     @relation("FarmerRatings", fields: [farmerId], references: [id], onDelete: Cascade)
+  userId      String   // Consumer who rated the farmer
+  user        User     @relation("UserFarmerRatings", fields: [userId], references: [id], onDelete: Cascade)
+  orderId     String?  // Optional: Link to specific order
+  order       Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  rating      Float    // 1-5 star rating
+  comment     String?  // Optional comment about farmer experience
+  categories  Json?    // Rating categories: {"quality": 4.5, "communication": 5.0, "delivery": 4.0}
+  verified    Boolean  @default(false) // Verified transaction
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([farmerId, userId, orderId]) // One rating per user per farmer per order
 }
