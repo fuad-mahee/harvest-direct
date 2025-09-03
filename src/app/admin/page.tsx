@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import EducationalResourcesAdmin from '@/components/EducationalResourcesAdmin';
+import EventsAdmin from '@/components/EventsAdmin';
 
 interface User {
   id: string;
@@ -260,6 +261,16 @@ export default function AdminDashboard() {
               }`}
             >
               Profile Approval ({pendingProfiles.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('events')}
+              className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'events'
+                  ? 'border-green-500 text-green-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Event Management
             </button>
             <button
               onClick={() => setActiveTab('resources')}
@@ -546,6 +557,10 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+          )}
+
+          {activeTab === 'events' && (
+            <EventsAdmin adminId={user?.id || ''} />
           )}
 
           {activeTab === 'resources' && (

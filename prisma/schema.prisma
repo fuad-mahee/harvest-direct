@@ -31,6 +31,9 @@ model User {
   reviews      ProductReview[] @relation("UserReviews")
   givenFarmerRatings FarmerRating[] @relation("UserFarmerRatings")
   receivedFarmerRatings FarmerRating[] @relation("FarmerRatings")
+  // Event relations
+  organizedEvents Event[] @relation("EventOrganizer")
+  eventAttendances EventAttendee[] @relation("EventAttendees")
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -187,6 +190,59 @@ enum FarmerProfileStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventType {
+  WORKSHOP
+  MEETUP
+  CONFERENCE
+  TRAINING
+  NETWORKING
+}
+
+// Event model for farmer events and workshops
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  location    String      // Event location/address
+  date        DateTime    // Event date and time
+  duration    Int?        // Duration in minutes
+  maxAttendees Int?       // Maximum number of attendees
+  currentAttendees Int   @default(0) // Current number of registered attendees
+  eventType   EventType
+  category    String      // e.g., "Organic Farming", "Pest Control", "Marketing"
+  tags        String[]    // Search tags
+  imageUrl    String?     // Optional event image
+  organizerId String      // Farmer who created the event
+  organizer   User        @relation("EventOrganizer", fields: [organizerId], references: [id])
+  status      EventStatus @default(PENDING)
+  adminNotes  String?     // Admin notes for approval/rejection
+  approvedBy  String?     // Admin user ID who approved
+  approvedAt  DateTime?
+  attendees   EventAttendee[] // Users attending the event
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// Event Attendee model for tracking event registrations
+model EventAttendee {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String   // User attending the event
+  user      User     @relation("EventAttendees", fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("REGISTERED") // REGISTERED, ATTENDED, CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([eventId, userId]) // One registration per user per event
 }
 
 // Educational Resource model for farmer resources

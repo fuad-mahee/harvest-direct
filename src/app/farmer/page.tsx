@@ -7,6 +7,8 @@ import OrdersComponent from '@/components/OrdersComponent';
 import NotificationsComponent from '@/components/NotificationsComponent';
 import EducationalResourcesFarmer from '@/components/EducationalResourcesFarmer';
 import FinancialTrackingComponent from '@/components/FinancialTrackingComponent';
+import EventManagement from '@/components/EventManagement';
+import EventsBrowsing from '@/components/EventsBrowsing';
 import DashboardStats from '@/components/DashboardStats';
 import ClientOnly from '@/components/ClientOnly';
 
@@ -21,7 +23,7 @@ export default function FarmerDashboard() {
   const [farmerId, setFarmerId] = useState<string>('');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'financial' | 'resources'>('products');
+  const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'financial' | 'resources' | 'events' | 'browse-events'>('products');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -139,6 +141,30 @@ export default function FarmerDashboard() {
                   </li>
                   <li>
                     <button
+                      onClick={() => setActiveSection('events')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'events'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      My Events
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setActiveSection('browse-events')}
+                      className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
+                        activeSection === 'browse-events'
+                          ? 'bg-green-50 text-green-700'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      Browse Events
+                    </button>
+                  </li>
+                  <li>
+                    <button
                       onClick={() => setActiveSection('resources')}
                       className={`w-full text-left flex items-center px-3 py-2 rounded-md font-medium transition-colors ${
                         activeSection === 'resources'
@@ -186,6 +212,20 @@ export default function FarmerDashboard() {
               {activeSection === 'profile' && (
                 <section id="farmer-profile">
                   <FarmerProfile farmerId={farmerId} />
+                </section>
+              )}
+
+              {/* Event Management Section */}
+              {activeSection === 'events' && (
+                <section id="event-management">
+                  <EventManagement farmerId={farmerId} />
+                </section>
+              )}
+
+              {/* Browse Events Section */}
+              {activeSection === 'browse-events' && (
+                <section id="browse-events">
+                  <EventsBrowsing userId={user?.id} />
                 </section>
               )}
 
