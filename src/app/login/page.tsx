@@ -46,13 +46,13 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-80">
-        <h2 className="text-2xl font-bold mb-6 text-center">User Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">User Login</h2>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
         />
         <input
@@ -60,13 +60,13 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
         />
         {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
         <div className="mt-4 text-center">
-          <p className="text-gray-600">Don't have an account?</p>
+          <p className="text-gray-700">Don't have an account?</p>
           <button 
             type="button"
             onClick={() => router.push('/signup')}

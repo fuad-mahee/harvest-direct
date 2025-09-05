@@ -181,13 +181,13 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading events...</div>;
+    return <div className="text-center py-8 text-gray-700">Loading events...</div>;
   }
 
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Event Management</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Event Management</h1>
         <button
           onClick={() => setShowForm(true)}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -198,64 +198,64 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
 
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg max-w-2xl w-full m-4 max-h-screen overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">
+            <div className="bg-white p-8 rounded-lg max-w-2xl w-full m-4 max-h-screen overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
               {editingEvent ? 'Edit Event' : 'Create New Event'}
             </h2>
             
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Title *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Title *</label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Description *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Description *</label>
                   <textarea
                     required
                     rows={4}
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Location *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Location *</label>
                   <input
                     type="text"
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Date & Time *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Date & Time *</label>
                   <input
                     type="datetime-local"
                     required
                     value={formData.date}
                     onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Event Type *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Event Type *</label>
                   <select
                     required
                     value={formData.eventType}
                     onChange={(e) => setFormData({...formData, eventType: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800"
                   >
                     <option value="">Select Type</option>
                     {eventTypes.map(type => (
@@ -265,12 +265,12 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Category *</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Category *</label>
                   <select
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800"
                   >
                     <option value="">Select Category</option>
                     {categories.map(cat => (
@@ -280,54 +280,54 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Duration (minutes)</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Duration (minutes)</label>
                   <input
                     type="number"
                     min="1"
                     value={formData.duration}
                     onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Max Attendees</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Max Attendees</label>
                   <input
                     type="number"
                     min="1"
                     value={formData.maxAttendees}
                     onChange={(e) => setFormData({...formData, maxAttendees: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Tags (comma-separated)</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Tags (comma-separated)</label>
                   <input
                     type="text"
                     value={formData.tags}
                     onChange={(e) => setFormData({...formData, tags: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                     placeholder="e.g. organic, workshop, beginner-friendly"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Image URL</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Image URL</label>
                   <input
                     type="url"
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-4 mt-6">
+                <div className="flex justify-end space-x-4 mt-6">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2 border rounded hover:bg-gray-50"
+                  className="px-4 py-2 border rounded hover:bg-gray-50 text-gray-700"
                 >
                   Cancel
                 </button>
@@ -346,7 +346,7 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
       <div className="grid gap-6">
         {events.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">No events found. Create your first event!</p>
+            <p className="text-gray-700">No events found. Create your first event!</p>
           </div>
         ) : (
           events.map((event) => (
@@ -354,13 +354,13 @@ export default function EventManagement({ farmerId }: { farmerId: string }) {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="text-xl font-semibold">{event.title}</h3>
+                    <h3 className="text-xl font-semibold text-gray-900">{event.title}</h3>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}>
                       {event.status}
                     </span>
                   </div>
-                  <p className="text-gray-600 mb-2">{event.description}</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-500">
+                  <p className="text-gray-800 mb-2">{event.description}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
                     <div>📅 {new Date(event.date).toLocaleString()}</div>
                     <div>📍 {event.location}</div>
                     <div>👥 {event.currentAttendees}/{event.maxAttendees || '∞'} attendees</div>

@@ -68,7 +68,7 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Create Account</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
         
         <input
           type="text"
@@ -76,7 +76,7 @@ export default function SignupPage() {
           placeholder="Full Name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
         />
         
@@ -86,7 +86,7 @@ export default function SignupPage() {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
         />
         
@@ -94,7 +94,7 @@ export default function SignupPage() {
           name="role"
           value={formData.role}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800"
           required
         >
           <option value="CONSUMER">Consumer</option>
@@ -107,7 +107,7 @@ export default function SignupPage() {
           placeholder="Password (min 8 characters)"
           value={formData.password}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
           minLength={8}
         />
@@ -118,7 +118,7 @@ export default function SignupPage() {
           placeholder="Confirm Password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-2 border rounded text-gray-800 placeholder-gray-500"
           required
         />
         
@@ -130,7 +130,7 @@ export default function SignupPage() {
         </button>
         
         <div className="mt-4 text-center">
-          <p className="text-gray-600">Already have an account?</p>
+          <p className="text-gray-700">Already have an account?</p>
           <button 
             type="button"
             onClick={() => router.push('/login')}

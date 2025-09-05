@@ -253,7 +253,7 @@ export default function EducationalResourcesFarmer() {
                   </span>
                 </div>
                 
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-gray-900">
                   {resource.title}
                 </h3>
                 

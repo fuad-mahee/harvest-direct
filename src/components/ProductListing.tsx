@@ -208,7 +208,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800 placeholder-gray-500"
                   placeholder="e.g., Organic Tomatoes"
                 />
               </div>
@@ -223,7 +223,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                   value={formData.category}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                 >
                   <option value="">Select a category</option>
                   {categories.map(cat => (
@@ -245,7 +245,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                   required
                   min="0"
                   step="0.01"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800 placeholder-gray-500"
                   placeholder="0.00"
                 />
               </div>
@@ -263,7 +263,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                     onChange={handleInputChange}
                     required
                     min="0"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800 placeholder-gray-500"
                     placeholder="0"
                   />
                 </div>
@@ -277,7 +277,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                     value={formData.unit}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   >
                     {units.map(unit => (
                       <option key={unit} value={unit}>{unit}</option>
@@ -296,7 +296,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                   name="imageUrl"
                   value={formData.imageUrl}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800 placeholder-gray-500"
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
@@ -312,7 +312,7 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                 rows={3}
                 value={formData.description}
                 onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800 placeholder-gray-500"
                 placeholder="Describe your product, growing methods, quality, etc."
               />
             </div>
@@ -370,10 +370,10 @@ export default function ProductListing({ farmerId }: ProductListingProps) {
                 )}
 
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
+                  <div className="text-gray-800">
                     <span className="font-medium">Price:</span> ${product.price}/{product.unit}
                   </div>
-                  <div>
+                  <div className="text-gray-800">
                     <span className="font-medium">Quantity:</span> {product.quantity} {product.unit}
                   </div>
                 </div>

@@ -140,7 +140,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading events...</div>;
+    return <div className="text-center py-8 text-gray-700">Loading events...</div>;
   }
 
   const stats = getStatusStats();
@@ -148,7 +148,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-4">Event Management</h1>
+        <h1 className="text-3xl font-bold mb-4 text-gray-800">Event Management</h1>
         
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -177,10 +177,10 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
               key={status}
               onClick={() => setFilter(status as any)}
               className={`px-4 py-2 rounded border ${
-                filter === status
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-              }`}
+                  filter === status
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
             >
               {status}
             </button>
@@ -192,7 +192,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
       <div className="space-y-6">
         {events.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">No events found for the selected filter.</p>
+            <p className="text-gray-700">No events found for the selected filter.</p>
           </div>
         ) : (
           events.map((event) => (
@@ -201,7 +201,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold">{event.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{event.title}</h3>
                       <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(event.status)}`}>
                         {event.status}
                       </span>
@@ -209,37 +209,37 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-gray-600 mb-2">{event.description}</p>
-                        <div className="space-y-1 text-sm text-gray-500">
+                        <p className="text-gray-700 mb-2">{event.description}</p>
+                        <div className="space-y-1 text-sm text-gray-600">
                           <div className="flex items-center">
-                            <span className="font-medium mr-2">📅 Date:</span>
+                            <span className="font-medium mr-2 text-gray-700">📅 Date:</span>
                             {new Date(event.date).toLocaleString()}
                           </div>
                           <div className="flex items-center">
-                            <span className="font-medium mr-2">📍 Location:</span>
+                            <span className="font-medium mr-2 text-gray-700">📍 Location:</span>
                             {event.location}
                           </div>
                           <div className="flex items-center">
-                            <span className="font-medium mr-2">👥 Attendees:</span>
+                            <span className="font-medium mr-2 text-gray-700">👥 Attendees:</span>
                             {event.currentAttendees}/{event.maxAttendees || '∞'}
                           </div>
                         </div>
                       </div>
                       
                       <div>
-                        <div className="space-y-1 text-sm">
+                        <div className="space-y-1 text-sm text-gray-700">
                           <div><span className="font-medium">Type:</span> {event.eventType}</div>
                           <div><span className="font-medium">Category:</span> {event.category}</div>
                           {event.duration && <div><span className="font-medium">Duration:</span> {event.duration} minutes</div>}
                         </div>
                         
                         <div className="mt-3">
-                          <div className="font-medium text-sm mb-1">Organizer:</div>
-                          <div className="text-sm text-gray-600">
+                          <div className="font-medium text-sm mb-1 text-gray-700">Organizer:</div>
+                          <div className="text-sm text-gray-700">
                             <div>{event.organizer.name}</div>
                             <div>{event.organizer.email}</div>
                             {event.organizer.farmerProfile && (
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-600">
                                 {event.organizer.farmerProfile.farmName} - {event.organizer.farmerProfile.farmAddress}
                               </div>
                             )}
@@ -250,7 +250,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
 
                     {event.tags.length > 0 && (
                       <div className="mb-3">
-                        <div className="text-sm font-medium mb-1">Tags:</div>
+                        <div className="text-sm font-medium mb-1 text-gray-700">Tags:</div>
                         <div className="flex flex-wrap gap-1">
                           {event.tags.map((tag, index) => (
                             <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
@@ -263,8 +263,8 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
 
                     {event.adminNotes && (
                       <div className="mt-3 p-3 bg-gray-50 border-l-4 border-gray-400 rounded">
-                        <div className="text-sm font-medium mb-1">Admin Notes:</div>
-                        <div className="text-sm text-gray-600">{event.adminNotes}</div>
+                        <div className="text-sm font-medium mb-1 text-gray-700">Admin Notes:</div>
+                        <div className="text-sm text-gray-700">{event.adminNotes}</div>
                       </div>
                     )}
                   </div>
@@ -301,12 +301,12 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
             <h2 className="text-xl font-bold mb-4">Review Event: {selectedEvent.title}</h2>
             
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Admin Notes (optional)</label>
+              <label className="block text-sm font-medium mb-2 text-gray-700">Admin Notes (optional)</label>
               <textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
                 rows={4}
-                className="w-full border rounded px-3 py-2"
+                className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                 placeholder="Add notes about your decision..."
               />
             </div>
@@ -314,7 +314,7 @@ export default function EventsAdmin({ adminId }: { adminId: string }) {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-50"
+                className="px-4 py-2 border rounded hover:bg-gray-50 text-gray-700"
               >
                 Cancel
               </button>

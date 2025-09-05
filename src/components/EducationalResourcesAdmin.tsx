@@ -172,13 +172,13 @@ export default function EducationalResourcesAdmin() {
   };
 
   if (loading) {
-    return <div className="p-6">Loading educational resources...</div>;
+    return <div className="p-6 text-gray-700">Loading educational resources...</div>;
   }
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Educational Resources Management</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Educational Resources Management</h1>
         <button
           onClick={() => setShowForm(true)}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -190,28 +190,28 @@ export default function EducationalResourcesAdmin() {
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
               {editingResource ? 'Edit Resource' : 'Create New Resource'}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block font-medium mb-1">Title *</label>
+                <label className="block font-medium mb-1 text-gray-700">Title *</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Category *</label>
+                <label className="block font-medium mb-1 text-gray-700">Category *</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2 text-gray-800"
                   required
                 >
                   <option value="">Select Category</option>
@@ -224,55 +224,55 @@ export default function EducationalResourcesAdmin() {
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Summary</label>
+                <label className="block font-medium mb-1 text-gray-700">Summary</label>
                 <textarea
                   value={formData.summary}
                   onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                  className="w-full border rounded px-3 py-2 h-20"
+                  className="w-full border rounded px-3 py-2 h-20 text-gray-800 placeholder-gray-500"
                   placeholder="Brief summary of the resource"
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Content *</label>
+                <label className="block font-medium mb-1 text-gray-700">Content *</label>
                 <textarea
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full border rounded px-3 py-2 h-40"
+                  className="w-full border rounded px-3 py-2 h-40 text-gray-800 placeholder-gray-500"
                   placeholder="Main content of the educational resource"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Tags</label>
+                <label className="block font-medium mb-1 text-gray-700">Tags</label>
                 <input
                   type="text"
                   value={formData.tags}
                   onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   placeholder="Enter tags separated by commas"
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Image URL</label>
+                <label className="block font-medium mb-1 text-gray-700">Image URL</label>
                 <input
                   type="url"
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   placeholder="Optional featured image URL"
                 />
               </div>
 
               <div>
-                <label className="block font-medium mb-1">Author</label>
+                <label className="block font-medium mb-1 text-gray-700">Author</label>
                 <input
                   type="text"
                   value={formData.author}
                   onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded px-3 py-2 text-gray-800 placeholder-gray-500"
                   placeholder="Author name (optional)"
                 />
               </div>
@@ -284,7 +284,7 @@ export default function EducationalResourcesAdmin() {
                   onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
                   className="mr-2"
                 />
-                <label>Publish immediately</label>
+                <label className="text-gray-700">Publish immediately</label>
               </div>
 
               <div className="flex space-x-2 pt-4">
@@ -322,7 +322,7 @@ export default function EducationalResourcesAdmin() {
 
       <div className="grid gap-4">
         {resources.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-700">
             No educational resources found. Create your first resource!
           </div>
         ) : (
@@ -330,16 +330,16 @@ export default function EducationalResourcesAdmin() {
             <div key={resource.id} className="border rounded-lg p-4">
               <div className="flex justify-between items-start mb-2">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{resource.title}</h3>
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                  <h3 className="text-lg font-semibold text-gray-800">{resource.title}</h3>
+                  <div className="flex items-center space-x-4 text-sm text-gray-700 mt-1">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
                       {resource.category}
                     </span>
-                    <span>Views: {resource.viewCount}</span>
-                    <span>
+                    <span className="text-gray-700">Views: {resource.viewCount}</span>
+                    <span className="text-gray-700">
                       Status: {resource.published ? 'Published' : 'Draft'}
                     </span>
-                    {resource.author && <span>By: {resource.author}</span>}
+                    {resource.author && <span className="text-gray-700">By: {resource.author}</span>}
                   </div>
                   {resource.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
