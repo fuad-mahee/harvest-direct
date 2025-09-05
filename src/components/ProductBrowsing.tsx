@@ -196,41 +196,54 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-600">Loading products...</div>
+        <div className="text-center animate-fade-in">
+          <div className="w-16 h-16 bg-gradient-green rounded-full mx-auto mb-4 animate-pulse-glow"></div>
+          <div className="text-lg text-gray-600 loading-dots">Loading fresh products</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Search and Filters */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Search & Filter Products</h3>
+      <div className="bg-gradient-cards rounded-2xl p-6 card-shadow hover-lift">
+        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+          <svg className="w-6 h-6 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Search & Filter Products
+        </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Search */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
               Search Products
             </label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by name or description..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by name or description..."
+                className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-300"
+              />
+              <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
           </div>
 
           {/* Category Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
               Category
             </label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-300"
             >
               <option value="all">All Categories</option>
               {categories.map((category) => (
@@ -242,8 +255,8 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
           </div>
 
           {/* Price Range */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
               Min Price ($)
             </label>
             <input
@@ -253,12 +266,12 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
               placeholder="0.00"
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-300"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
               Max Price ($)
             </label>
             <input
@@ -268,69 +281,102 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
               placeholder="100.00"
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 focus:border-green-400 transition-all duration-300"
             />
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between items-center">
+        <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <button
             onClick={clearFilters}
-            className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="btn-secondary text-sm flex items-center"
           >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
             Clear Filters
           </button>
-          <span className="text-sm text-gray-600">
-            {products.length} product{products.length !== 1 ? 's' : ''} found
-          </span>
+          <div className="flex items-center bg-green-50 px-4 py-2 rounded-xl">
+            <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span className="text-sm font-semibold text-green-700">
+              {products.length} fresh product{products.length !== 1 ? 's' : ''} available
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Products Grid */}
       {products.length === 0 ? (
-        <div className="bg-white p-12 rounded-lg shadow text-center">
+        <div className="bg-gradient-cards rounded-2xl p-12 card-shadow text-center animate-fade-in">
           <div className="text-gray-500">
-            <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+            <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+            <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria to discover fresh produce.</p>
+            <button 
+              onClick={clearFilters}
+              className="btn-primary"
+            >
+              Reset Filters
+            </button>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {products.map((product, index) => (
+            <div 
+              key={product.id} 
+              className="bg-gradient-cards rounded-2xl card-shadow overflow-hidden hover-lift group relative animate-fade-in"
+              style={{animationDelay: `${index * 0.1}s`}}
+            >
               {/* Product Image */}
-              <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
+              <div className="h-56 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 ) : (
                   <div className="text-gray-400 text-center">
-                    <svg className="mx-auto h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-sm">No image</span>
+                    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-medium">No image available</span>
                   </div>
                 )}
                 
-                {/* Category Badge - Positioned on image */}
-                <div className="absolute top-3 right-3">
-                  <span className="text-xs bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full font-medium shadow-sm">
+                {/* Category Badge */}
+                <div className="absolute top-4 right-4">
+                  <span className="glass text-xs text-gray-700 px-3 py-2 rounded-full font-semibold shadow-lg">
                     {product.category}
+                  </span>
+                </div>
+
+                {/* Stock Status */}
+                <div className="absolute top-4 left-4">
+                  <span className={`text-xs px-3 py-2 rounded-full font-semibold shadow-lg ${
+                    product.inStock && product.quantity > 0 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-red-100 text-red-700 border border-red-200'
+                  }`}>
+                    {product.inStock && product.quantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
                   </span>
                 </div>
               </div>
 
               {/* Product Info */}
-              <div className="p-5 space-y-4">
+              <div className="p-6 space-y-4">
                 {/* Product Name */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
+                  <h3 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-green-600 transition-colors duration-300">
                     {product.name}
                   </h3>
                 </div>
@@ -343,46 +389,46 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
                 )}
 
                 {/* Price and Availability */}
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-center bg-green-50 rounded-xl p-4">
                   <div>
                     <div className="text-2xl font-bold text-green-600">
                       ${product.price.toFixed(2)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-green-700 font-medium">
                       per {product.unit}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-900">
-                      {product.quantity} {product.unit}
+                    <div className="text-lg font-bold text-gray-900">
+                      {product.quantity}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      available
+                    <div className="text-sm text-gray-600">
+                      {product.unit} available
                     </div>
                   </div>
                 </div>
 
-                {/* Farmer Information - Always Visible */}
-                <div className="flex items-center space-x-3 py-2">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-medium text-green-700">
+                {/* Farmer Information */}
+                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="w-10 h-10 bg-gradient-green rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-white">
                       {product.farmer.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-semibold text-gray-900">
                         {product.farmer.name}
                       </span>
                       {product.farmer.farmerProfile?.status === 'APPROVED' && product.farmer.farmerProfile.certificationBadge && (
-                        <span className="inline-flex items-center text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200 flex-shrink-0">
+                        <span className="inline-flex items-center text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full border border-green-200 flex-shrink-0">
                           <span className="mr-1">🏆</span>
-                          <span className="font-medium">Verified</span>
+                          <span className="font-semibold">Verified</span>
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-500">
-                      Farmer
+                    <div className="text-xs text-gray-500 font-medium">
+                      Local Farmer
                     </div>
                   </div>
                 </div>
@@ -398,28 +444,28 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
                     setSelectedProduct(product);
                     setShowProductDetails(true);
                   }}
-                  className="w-full py-2 px-3 text-sm border border-gray-200 text-gray-700 rounded-md hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center space-x-2 mb-3"
+                  className="w-full py-3 px-4 text-sm border-2 border-green-200 text-green-700 rounded-xl hover:bg-green-50 hover:border-green-300 transition-all duration-300 flex items-center justify-center space-x-2 group/btn"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 group-hover/btn:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  <span>View Reviews & Details</span>
+                  <span className="font-semibold">View Reviews & Details</span>
                 </button>
 
                 {/* Hover Area for Profile Details */}
                 {product.farmer.farmerProfile?.status === 'APPROVED' && (
                   <div 
-                    className="border border-dashed border-gray-200 rounded-lg p-3 cursor-pointer group hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200"
+                    className="border-2 border-dashed border-blue-200 rounded-xl p-4 cursor-pointer group/profile hover:border-blue-400 hover:bg-blue-50 transition-all duration-300"
                     onMouseEnter={(e) => handleMouseEnter(product.id, e)}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={handleMouseLeave}
                   >
                     <div className="flex items-center justify-center text-center">
-                      <div className="text-xs text-gray-600 group-hover:text-blue-700 font-medium flex items-center">
-                        <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="text-sm text-blue-600 group-hover/profile:text-blue-700 font-semibold flex items-center">
+                        <svg className="w-5 h-5 mr-2 group-hover/profile:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span>Farm profile & certifications</span>
+                        <span>Hover for farm details & certifications</span>
                       </div>
                     </div>
                   </div>
@@ -429,25 +475,25 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
                 <button 
                   onClick={() => addToCart(product.id)}
                   disabled={addingToCart === product.id || !product.inStock || product.quantity === 0}
-                  className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm disabled:cursor-not-allowed disabled:transform-none ${
+                  className={`w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-offset-2 shadow-lg disabled:cursor-not-allowed disabled:transform-none ${
                     addedToCart === product.id
-                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-pulse-glow'
                       : addingToCart === product.id || !product.inStock || product.quantity === 0
                       ? 'bg-gray-400 text-white cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white'
+                      : 'bg-gradient-green hover:scale-105 hover-glow text-white focus:ring-green-200'
                   }`}
                 >
                   {addingToCart === product.id ? (
                     <div className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Adding...
+                      Adding to Cart...
                     </div>
                   ) : addedToCart === product.id ? (
                     <div className="flex items-center justify-center">
-                      <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       Added to Cart!
@@ -455,7 +501,12 @@ export default function ProductBrowsing({ consumerId, onAddToCart }: ProductBrow
                   ) : !product.inStock || product.quantity === 0 ? (
                     'Out of Stock'
                   ) : (
-                    'Add to Cart'
+                    <div className="flex items-center justify-center">
+                      <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6.5-5l2.5 5M17 13l2.5 5" />
+                      </svg>
+                      Add to Cart
+                    </div>
                   )}
                 </button>
               </div>

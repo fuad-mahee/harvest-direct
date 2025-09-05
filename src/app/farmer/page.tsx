@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import ProductListing from '@/components/ProductListing';
 import FarmerProfile from '@/components/FarmerProfile';
 import OrdersComponent from '@/components/OrdersComponent';
@@ -20,29 +21,18 @@ interface User {
 }
 
 export default function FarmerDashboard() {
+  const { user, loading, authorized } = useAuth('FARMER');
   const [farmerId, setFarmerId] = useState<string>('');
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<'products' | 'profile' | 'orders' | 'financial' | 'resources' | 'events' | 'browse-events'>('products');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     
-    // Get user data from localStorage only after component mounts
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setFarmerId(parsedUser.id);
-        setLoading(false);
-      } else {
-        // If no user data in localStorage, redirect to login
-        window.location.href = '/login';
-      }
+    if (authorized && user) {
+      setFarmerId(user.id);
     }
-  }, []);
+  }, [authorized, user]);
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
@@ -51,9 +41,23 @@ export default function FarmerDashboard() {
     }
   };
 
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  // If not authorized, the useAuth hook will handle redirection
+  if (!authorized) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
-      {!mounted || loading ? (
+      {!mounted ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
         </div>

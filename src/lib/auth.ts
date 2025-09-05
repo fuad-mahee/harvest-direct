@@ -39,11 +39,68 @@ export function isAuthenticated(): boolean {
   return getCurrentUser() !== null;
 }
 
+// Check if user has specific role
+export function hasRole(requiredRole: 'ADMIN' | 'FARMER' | 'CONSUMER'): boolean {
+  const user = getCurrentUser();
+  return user?.role === requiredRole;
+}
+
+// Check if user has any of the specified roles
+export function hasAnyRole(roles: ('ADMIN' | 'FARMER' | 'CONSUMER')[]): boolean {
+  const user = getCurrentUser();
+  return user ? roles.includes(user.role) : false;
+}
+
 // Redirect to login if not authenticated
 export function requireAuth(): void {
   if (!isAuthenticated()) {
     window.location.href = '/login';
   }
+}
+
+// Redirect to appropriate dashboard based on user role
+export function redirectToDashboard(): void {
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = '/login';
+    return;
+  }
+
+  switch (user.role) {
+    case 'ADMIN':
+      window.location.href = '/admin';
+      break;
+    case 'FARMER':
+      window.location.href = '/farmer';
+      break;
+    case 'CONSUMER':
+      window.location.href = '/consumer';
+      break;
+    default:
+      window.location.href = '/login';
+  }
+}
+
+// Require specific role access
+export function requireRole(requiredRole: 'ADMIN' | 'FARMER' | 'CONSUMER'): void {
+  const user = getCurrentUser();
+  
+  if (!user) {
+    window.location.href = '/login';
+    return;
+  }
+  
+  if (user.role !== requiredRole) {
+    // Redirect to their appropriate dashboard
+    redirectToDashboard();
+    return;
+  }
+}
+
+// Show unauthorized access message and redirect
+export function handleUnauthorizedAccess(): void {
+  alert('You are not authorized to access this page. Redirecting to your dashboard.');
+  redirectToDashboard();
 }
 
 // Logout user

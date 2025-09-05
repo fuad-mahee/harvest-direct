@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import ProductBrowsing from '@/components/ProductBrowsing';
 import CartComponent from '@/components/CartComponent';
 import OrdersComponent from '@/components/OrdersComponent';
@@ -16,27 +17,13 @@ interface User {
 }
 
 export default function ConsumerDashboard() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, authorized } = useAuth('CONSUMER');
   const [activeTab, setActiveTab] = useState('products');
   const [cartItemCount, setCartItemCount] = useState(0);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    
-    // Get user data from localStorage only after component mounts
-    if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setLoading(false);
-      } else {
-        // If no user data in localStorage, redirect to login
-        window.location.href = '/login';
-      }
-    }
   }, []);
 
   const handleLogout = () => {
@@ -50,13 +37,27 @@ export default function ConsumerDashboard() {
     setCartItemCount(itemCount);
   };
 
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  // If not authorized, the useAuth hook will handle redirection
+  if (!authorized) {
+    return null;
+  }
+
   const handleAddToCart = () => {
     // This will trigger a re-fetch of cart data in CartComponent
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {!mounted || loading ? (
+      {!mounted ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-lg">Loading...</div>
         </div>

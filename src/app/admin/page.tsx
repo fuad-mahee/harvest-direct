@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import EducationalResourcesAdmin from '@/components/EducationalResourcesAdmin';
 import EventsAdmin from '@/components/EventsAdmin';
 
@@ -60,34 +61,40 @@ interface PendingProfile {
 }
 
 export default function AdminDashboard() {
+  const { user, loading, authorized } = useAuth('ADMIN');
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [pendingProducts, setPendingProducts] = useState<PendingProduct[]>([]);
   const [pendingProfiles, setPendingProfiles] = useState<PendingProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState('users');
 
   useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-    } else {
-      // If no user data in localStorage, redirect to login
-      window.location.href = '/login';
+    if (authorized) {
+      fetchPendingUsers();
+      fetchPendingProducts();
+      fetchPendingProfiles();
     }
-    
-    fetchPendingUsers();
-    fetchPendingProducts();
-    fetchPendingProfiles();
-  }, []);
+  }, [authorized]);
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
     window.location.href = '/login';
   };
+
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  // If not authorized, the useAuth hook will handle redirection
+  if (!authorized) {
+    return null;
+  }
 
   async function fetchPendingUsers() {
     try {
@@ -99,7 +106,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching pending users:', error);
     } finally {
-      setLoading(false);
+      setDataLoading(false);
     }
   }
 

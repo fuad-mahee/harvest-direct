@@ -22,15 +22,21 @@ export default function LoginPage() {
       // Store user data in localStorage for session management
       localStorage.setItem('currentUser', JSON.stringify(data.user));
       
-      // Redirect based on user role
+      // Redirect based on user role with proper success message
+      const redirectMessage = `Welcome back, ${data.user.name}! Redirecting to your dashboard...`;
+      
       if (data.user?.role === 'ADMIN') {
+        console.log(redirectMessage);
         router.push('/admin');
       } else if (data.user?.role === 'FARMER') {
+        console.log(redirectMessage);
         router.push('/farmer');
       } else if (data.user?.role === 'CONSUMER') {
+        console.log(redirectMessage);
         router.push('/consumer');
       } else {
-        router.push('/admin'); // fallback
+        setError('Invalid user role. Please contact support.');
+        return;
       }
     } else {
       setError(data.error || 'Invalid credentials');
@@ -40,7 +46,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-80">
-        <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">User Login</h2>
         <input
           type="email"
           placeholder="Email"
