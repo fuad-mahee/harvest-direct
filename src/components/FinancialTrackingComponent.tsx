@@ -140,13 +140,13 @@ export default function FinancialTrackingComponent({ farmerId }: FinancialTracki
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-800"
           >
-            <option value="all">All Time</option>
-            <option value="7">Last 7 Days</option>
-            <option value="30">Last 30 Days</option>
-            <option value="90">Last 3 Months</option>
-            <option value="365">Last Year</option>
+            <option value="all" className="text-gray-800">All Time</option>
+            <option value="7" className="text-gray-800">Last 7 Days</option>
+            <option value="30" className="text-gray-800">Last 30 Days</option>
+            <option value="90" className="text-gray-800">Last 3 Months</option>
+            <option value="365" className="text-gray-800">Last Year</option>
           </select>
           <button
             onClick={exportFinancialReport}
@@ -267,8 +267,8 @@ export default function FinancialTrackingComponent({ farmerId }: FinancialTracki
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-gray-900">{month.month}</span>
-                      <span className="text-sm text-gray-600">{formatCurrency(month.revenue)}</span>
+                      <span className="text-sm font-medium text-gray-800">{month.month}</span>
+                      <span className="text-sm text-gray-700">{formatCurrency(month.revenue)}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
@@ -278,7 +278,7 @@ export default function FinancialTrackingComponent({ farmerId }: FinancialTracki
                         }}
                       ></div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">{month.orders} orders</div>
+                    <div className="text-xs text-gray-700 mt-1">{month.orders} orders</div>
                   </div>
                 </div>
               ))}
