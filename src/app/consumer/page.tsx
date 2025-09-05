@@ -21,6 +21,7 @@ export default function ConsumerDashboard() {
   const [activeTab, setActiveTab] = useState('products');
   const [cartItemCount, setCartItemCount] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [cartKey, setCartKey] = useState(0); // Add this to force cart refresh
 
   useEffect(() => {
     setMounted(true);
@@ -52,7 +53,8 @@ export default function ConsumerDashboard() {
   }
 
   const handleAddToCart = () => {
-    // This will trigger a re-fetch of cart data in CartComponent
+    // Force cart component to refresh by incrementing the key
+    setCartKey(prev => prev + 1);
   };
 
   return (
@@ -78,6 +80,7 @@ export default function ConsumerDashboard() {
                   <ClientOnly>
                     {user && (
                       <CartComponent 
+                        key={cartKey}
                         userId={user.id} 
                         onCartUpdate={handleCartUpdate}
                       />

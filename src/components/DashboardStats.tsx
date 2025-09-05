@@ -22,34 +22,78 @@ export default function DashboardStats({ farmerId }: DashboardStatsProps) {
 
   useEffect(() => {
     fetchStats();
+    
+    // Set up interval to refresh stats every 30 seconds
+    const interval = setInterval(fetchStats, 30000);
+    
+    return () => clearInterval(interval);
   }, [farmerId]);
 
   const fetchStats = async () => {
     if (!farmerId) return;
     
     try {
-      // Fetch financial data for earnings and orders
-      const [financialResponse, productsResponse] = await Promise.all([
-        fetch(`/api/farmer/financial-tracking?days=all&farmerId=${farmerId}`),
-        fetch(`/api/farmer/products?farmerId=${farmerId}`)
+      setLoading(true);
+      
+      // Fetch products and orders data
+      const [productsResponse, ordersResponse] = await Promise.all([
+        fetch(`/api/farmer/products?farmerId=${farmerId}`),
+        fetch(`/api/orders?farmerId=${farmerId}`)
       ]);
 
-      if (financialResponse.ok && productsResponse.ok) {
-        const [financialData, productsData] = await Promise.all([
-          financialResponse.json(),
-          productsResponse.json()
-        ]);
+      let newStats = {
+        productsListed: 0,
+        totalOrders: 0,
+        totalEarnings: 0
+      };
 
-        const newStats = {
-          productsListed: productsData.products?.length || 0,
-          totalOrders: financialData.totalOrders || 0,
-          totalEarnings: financialData.totalRevenue || 0
-        };
-
-        setStats(newStats);
+      // Get products count
+      if (productsResponse.ok) {
+        const productsData = await productsResponse.json();
+        newStats.productsListed = productsData.products?.length || 0;
       }
+
+      // Get orders and calculate earnings
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        const orders = ordersData.orders || [];
+        
+        // Count all orders that include farmer's products
+        newStats.totalOrders = orders.length;
+        
+        // Calculate total earnings from all orders (including pending ones)
+        let totalEarnings = 0;
+        orders.forEach((order: any) => {
+          if (order.items) {
+            order.items.forEach((item: any) => {
+              if (item.farmerId === farmerId) {
+                totalEarnings += item.price * item.quantity;
+              }
+            });
+          }
+        });
+        
+        newStats.totalEarnings = totalEarnings;
+      }
+
+      setStats(newStats);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
+      
+      // Fallback to financial tracking API if orders API fails
+      try {
+        const financialResponse = await fetch(`/api/farmer/financial-tracking?days=all&farmerId=${farmerId}`);
+        if (financialResponse.ok) {
+          const financialData = await financialResponse.json();
+          setStats(prev => ({
+            ...prev,
+            totalOrders: financialData.totalOrders || 0,
+            totalEarnings: financialData.totalRevenue || 0
+          }));
+        }
+      } catch (fallbackError) {
+        console.error('Fallback financial API also failed:', fallbackError);
+      }
     } finally {
       setLoading(false);
     }
