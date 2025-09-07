@@ -323,7 +323,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   value={formData.farmName}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="e.g., Green Valley Farm"
                 />
               </div>
@@ -339,7 +339,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   value={formData.farmSize}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="e.g., 10 acres, 5 hectares"
                 />
               </div>
@@ -355,7 +355,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   value={formData.farmAddress}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="Full farm address including city, state"
                 />
               </div>
@@ -371,7 +371,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   value={formData.experience}
                   onChange={handleInputChange}
                   min="0"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="Years"
                 />
               </div>
@@ -386,7 +386,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   name="contactPhone"
                   value={formData.contactPhone}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="Phone number"
                 />
               </div>
@@ -401,7 +401,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                   name="website"
                   value={formData.website}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                   placeholder="https://your-farm-website.com"
                 />
               </div>
@@ -455,7 +455,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                     type="text"
                     value={cert}
                     onChange={(e) => handleCertificationChange(index, e.target.value)}
-                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                     placeholder="e.g., USDA Organic, Fair Trade"
                   />
                   <button
@@ -486,7 +486,7 @@ export default function FarmerProfile({ farmerId }: FarmerProfileProps) {
                 rows={4}
                 value={formData.aboutFarm}
                 onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-gray-800"
                 placeholder="Tell customers about your farm, your story, sustainable practices, etc."
               />
             </div>
